@@ -1,11 +1,17 @@
 package code
 
 import (
-	"github.com/brunno98/voucher-manager/domain/voucher"
-	"gorm.io/gorm"
+	"time"
 )
 
 type Code struct {
-	gorm.Model
-	VoucherId voucher.Voucher
+	Code      string `gorm:"primaryKey"`
+	VoucherId uint
+}
+
+type Recovered struct {
+	ID             uint
+	CodeId         string
+	RecoveryDate   time.Time
+	SubscriptionId string
 }
