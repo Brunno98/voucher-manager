@@ -96,5 +96,5 @@ func (service *voucherService) AvailableVouchers(subscriptionId string, activati
 	availableDTO.AvailableVouchers = vouchers
 
 	// retorna as informações do DTO
-	return AvailableVouchersDTO{}, nil
+	return availableDTO, nil
 }
