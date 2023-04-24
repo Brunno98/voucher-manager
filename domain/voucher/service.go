@@ -8,7 +8,7 @@ import (
 )
 
 type Service interface {
-	Recover(subscriptionId string, activationDate time.Time, voucherKey string) (code.Code, error)
+	Recover(subscriptionId string, activationDate, now time.Time, voucherKey string) (code.Code, error)
 	AvailableVouchers(subscriotionId string, activationDate time.Time) (AvailableVouchersDTO, error)
 }
 
