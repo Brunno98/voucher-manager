@@ -13,3 +13,13 @@ type RecoverServiceImpl struct{}
 func NewRecoveryService() *RecoverServiceImpl {
 	return &RecoverServiceImpl{}
 }
+
+func (service *RecoverServiceImpl) GetEarliestRecoveryDateNotUsed(subscriptionId string, availableDates []time.Time) (earliestDate time.Time, found bool) {
+	// (TODO) Impletentar...
+	return availableDates[0], true
+}
+
+func (service *RecoverServiceImpl) FilterRecoveryAlreadyUsed(dates []time.Time) []time.Time {
+	// (TODO) Implementar...
+	return dates
+}
