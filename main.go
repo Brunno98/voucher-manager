@@ -19,12 +19,12 @@ func main() {
 
 	voucherRepository := repository.NewVoucherRepository(db)
 	codeRepository := repository.NewCodeRepository(db)
-	// recoveredRepository := repository.NewRecoveredRepository(db)
+	recoveredRepository := repository.NewRecoveredRepository(db)
 
 	voucherRepository.PopulateVoucher()
 	codeRepository.PopulateCodes()
 
-	recoveryService := code.NewRecoveryService()
+	recoveryService := code.NewRecoveryService(recoveredRepository)
 	voucherService := voucher.NewService(voucherRepository, recoveryService)
 
 	r := gin.Default()

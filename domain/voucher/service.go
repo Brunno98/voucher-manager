@@ -38,8 +38,8 @@ func (service *voucherService) Recover(subscriptionId string, activationDate, no
 
 	// Verificar se já houve resgate para as data disponives, as data que já tem
 	// resgate devem ser desconsidaras e removidas da lista. Caso a lista esteja vazia, retornar erro
-	earliestRetrievalDate, found := service.RecoverService.GetEarliestRecoveryDateNotUsed(subscriptionId, availableDates)
-	if !found {
+	earliestRetrievalDate := service.RecoverService.GetEarliestRecoveryDateNotUsed(subscriptionId, availableDates)
+	if earliestRetrievalDate.IsZero() {
 		return code.Code{}, errors.New("unavailable date to recover")
 	}
 

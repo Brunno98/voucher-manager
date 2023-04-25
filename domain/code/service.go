@@ -1,22 +1,52 @@
 package code
 
-import "time"
+import (
+	"time"
+)
 
 type RecoverService interface {
 	// Recover(subscriptionId string, referenceDate time.Time, voucherKey string) (Code, error)
-	GetEarliestRecoveryDateNotUsed(subscriptionId string, availableDates []time.Time) (earliestDate time.Time, found bool)
+	GetEarliestRecoveryDateNotUsed(subscriptionId string, availableDates []time.Time) time.Time
 	FilterRecoveryAlreadyUsed(dates []time.Time) []time.Time
 }
 
-type RecoverServiceImpl struct{}
-
-func NewRecoveryService() *RecoverServiceImpl {
-	return &RecoverServiceImpl{}
+type RecoverServiceImpl struct {
+	Repository
 }
 
-func (service *RecoverServiceImpl) GetEarliestRecoveryDateNotUsed(subscriptionId string, availableDates []time.Time) (earliestDate time.Time, found bool) {
-	// (TODO) Impletentar...
-	return availableDates[0], true
+func NewRecoveryService(r Repository) *RecoverServiceImpl {
+	return &RecoverServiceImpl{r}
+}
+
+// Dada a lista de datas de resgates de um usuário, é rotornado a data não usada mais antiga dessa lista.
+// availableDates deve estar ordenado começando da data mais antiga.
+func (service *RecoverServiceImpl) GetEarliestRecoveryDateNotUsed(subscriptionId string, availableDates []time.Time) time.Time {
+	if len(availableDates) == 0 {
+		return time.Time{}
+	}
+
+	recoveredDates := service.Repository.GetLastRecoveredDates(subscriptionId, len(availableDates))
+	if len(recoveredDates) == 0 {
+		return availableDates[0]
+	}
+
+	var validDate time.Time
+	for _, available := range availableDates {
+		isRecovered := false
+		for _, recovered := range recoveredDates {
+			if available == recovered {
+				isRecovered = true
+				break
+			}
+		}
+		if isRecovered {
+			continue
+		}
+		validDate = available
+		break
+	}
+
+	return validDate
 }
 
 func (service *RecoverServiceImpl) FilterRecoveryAlreadyUsed(dates []time.Time) []time.Time {
