@@ -30,14 +30,19 @@ func (r *RecoverParameter) GetVoucherQuantity(startDate, now time.Time) int {
 // Retorna a quantidade de vouchers expirados entra as datas de inicio e agora.
 // Considera que já no dia de ativação foi fornecido um voucher.
 func (r *RecoverParameter) GetVoucherExpiredQuantity(startDate, now time.Time) int {
-	deltaDays := now.Sub(startDate).Hours() / 24 // Days
-	if int(deltaDays) < r.DaysToExpiry {
-		// Se a diferença entre a data de inicio e o agora for menor que
-		// os dias necessários para um voucher expirar então não tem voucher expirado.
+	// O calculo começa a partir da data da 1ª expiração
+	dateOfFirstExpiry := startDate.AddDate(0, 0, r.DaysToExpiry)
+	if now.Before(dateOfFirstExpiry) {
+		// Se a data de agora for anterior a data da primeira expiração
+		// então não há vouchers expirados
 		return 0
 	}
-	// (TODO) explicar esse calculo
-	return ((int(deltaDays) - r.DaysToExpiry) / r.DaysToRenew) + 1
+	deltaDays := now.Sub(dateOfFirstExpiry).Hours() / 24 // Days
+
+	// É feita a divisão da diferença de dias pelo dias para um novo resgate
+	// para saber quantos resgates foram disponibilizados no intervalo.
+	// É somado 1 ao final pois é fornecido um resgate no momento da ativação.
+	return (int(deltaDays) / r.DaysToRenew) + 1
 }
 
 // Retorna a lista de datas que deram direito à um novo resgate ainda não expirado.
