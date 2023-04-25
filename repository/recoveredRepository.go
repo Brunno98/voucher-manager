@@ -16,7 +16,7 @@ func NewRecoveredRepository(db *gorm.DB) *RecoveredRepository {
 	return &RecoveredRepository{db}
 }
 
-func (repository *RecoveredRepository) GetLastRecoveredDates(subscriptionId string, limit int) []time.Time {
+func (repository *RecoveredRepository) GetLastRecoveredDates(subscriptionId string, limit int) ([]time.Time, error) {
 	// (TODO) implementar...
-	return []time.Time{}
+	return []time.Time{}, nil
 }

@@ -6,7 +6,7 @@ import (
 
 type RecoverService interface {
 	// Recover(subscriptionId string, referenceDate time.Time, voucherKey string) (Code, error)
-	GetEarliestRecoveryDateNotUsed(subscriptionId string, availableDates []time.Time) time.Time
+	GetEarliestRecoveryDateNotUsed(subscriptionId string, availableDates []time.Time) (time.Time, error)
 	FilterRecoveryAlreadyUsed(dates []time.Time) []time.Time
 }
 
@@ -20,14 +20,17 @@ func NewRecoveryService(r Repository) *RecoverServiceImpl {
 
 // Dada a lista de datas de resgates de um usuário, é rotornado a data não usada mais antiga dessa lista.
 // availableDates deve estar ordenado começando da data mais antiga.
-func (service *RecoverServiceImpl) GetEarliestRecoveryDateNotUsed(subscriptionId string, availableDates []time.Time) time.Time {
+func (service *RecoverServiceImpl) GetEarliestRecoveryDateNotUsed(subscriptionId string, availableDates []time.Time) (time.Time, error) {
 	if len(availableDates) == 0 {
-		return time.Time{}
+		return time.Time{}, nil
 	}
 
-	recoveredDates := service.Repository.GetLastRecoveredDates(subscriptionId, len(availableDates))
+	recoveredDates, err := service.Repository.GetLastRecoveredDates(subscriptionId, len(availableDates))
+	if err != nil {
+		return time.Time{}, err
+	}
 	if len(recoveredDates) == 0 {
-		return availableDates[0]
+		return availableDates[0], nil
 	}
 
 	var validDate time.Time
@@ -46,7 +49,7 @@ func (service *RecoverServiceImpl) GetEarliestRecoveryDateNotUsed(subscriptionId
 		break
 	}
 
-	return validDate
+	return validDate, nil
 }
 
 func (service *RecoverServiceImpl) FilterRecoveryAlreadyUsed(dates []time.Time) []time.Time {

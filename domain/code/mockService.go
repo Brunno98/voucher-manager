@@ -49,11 +49,12 @@ func (mr *MockRecoverServiceMockRecorder) FilterRecoveryAlreadyUsed(dates interf
 }
 
 // GetEarliestRecoveryDateNotUsed mocks base method.
-func (m *MockRecoverService) GetEarliestRecoveryDateNotUsed(subscriptionId string, availableDates []time.Time) time.Time {
+func (m *MockRecoverService) GetEarliestRecoveryDateNotUsed(subscriptionId string, availableDates []time.Time) (time.Time, error) {
         m.ctrl.T.Helper()
         ret := m.ctrl.Call(m, "GetEarliestRecoveryDateNotUsed", subscriptionId, availableDates)
         ret0, _ := ret[0].(time.Time)
-        return ret0
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
 }
 
 // GetEarliestRecoveryDateNotUsed indicates an expected call of GetEarliestRecoveryDateNotUsed.

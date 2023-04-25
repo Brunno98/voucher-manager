@@ -35,11 +35,12 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 }
 
 // GetLastRecoveredDates mocks base method.
-func (m *MockRepository) GetLastRecoveredDates(arg0 string, arg1 int) []time.Time {
+func (m *MockRepository) GetLastRecoveredDates(arg0 string, arg1 int) ([]time.Time, error) {
         m.ctrl.T.Helper()
         ret := m.ctrl.Call(m, "GetLastRecoveredDates", arg0, arg1)
         ret0, _ := ret[0].([]time.Time)
-        return ret0
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
 }
 
 // GetLastRecoveredDates indicates an expected call of GetLastRecoveredDates.

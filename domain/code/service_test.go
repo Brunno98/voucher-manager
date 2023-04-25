@@ -1,6 +1,7 @@
 package code
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -31,12 +32,35 @@ func TestGetEarliestRecoveryDateNotUsed(t *testing.T) {
 			mockRepository.
 				EXPECT().
 				GetLastRecoveredDates(subscriptionId, len(testCase.AvailableDates)).
-				Return(testCase.RecoveredDates).AnyTimes()
+				Return(testCase.RecoveredDates, nil).AnyTimes()
 
-			got := service.GetEarliestRecoveryDateNotUsed(subscriptionId, testCase.AvailableDates)
+			got, err := service.GetEarliestRecoveryDateNotUsed(subscriptionId, testCase.AvailableDates)
+			if err != nil {
+				t.Fatal(err)
+			}
 			if got != testCase.Want {
 				t.Fatalf("Expected date: %s but got: %s", testCase.Want, got)
 			}
 		})
+	}
+}
+
+func TestGetEarliestRecoveryDateNotUsedWithErr(t *testing.T) {
+	subscriptionId := "SOME ID"
+	availableDates := []time.Time{time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)}
+	expectedErr := errors.New("some error")
+	mockRepository := NewMockRepository(gomock.NewController(t))
+	service := NewRecoveryService(mockRepository)
+	mockRepository.
+		EXPECT().
+		GetLastRecoveredDates(subscriptionId, len(availableDates)).
+		Return([]time.Time{}, expectedErr).AnyTimes()
+
+	got, err := service.GetEarliestRecoveryDateNotUsed(subscriptionId, availableDates)
+	if err != expectedErr {
+		t.Fatal(err)
+	}
+	if got != (time.Time{}) {
+		t.Fatalf("Expected date: %s but got: %s", time.Time{}, got)
 	}
 }
