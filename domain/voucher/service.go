@@ -53,8 +53,6 @@ func (service *voucherService) Recover(subscriptionId string, activationDate, no
 		return code.Code{}, errors.New("error while recovering code")
 	}
 
-	// (TODO) persiste em historico quem resgatou, qual codigo e quando
-
 	// retorna o codigo resgatado
 	return recovered, nil
 }

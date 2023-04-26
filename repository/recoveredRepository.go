@@ -17,6 +17,19 @@ func NewRecoveredRepository(db *gorm.DB) *RecoveredRepository {
 }
 
 func (repository *RecoveredRepository) GetLastRecoveredDates(subscriptionId string, limit int) ([]time.Time, error) {
-	// (TODO) implementar...
-	return []time.Time{}, nil
+	recovers := []code.Recovered{}
+	err := repository.db.
+		Limit(limit).
+		Order("reference_date DESC").
+		Find(&recovers).Error
+	if err != nil {
+		return []time.Time{}, err
+	}
+
+	recoveredDates := []time.Time{}
+	for _, r := range recovers {
+		recoveredDates = append(recoveredDates, r.ReferenceDate)
+	}
+
+	return recoveredDates, nil
 }
