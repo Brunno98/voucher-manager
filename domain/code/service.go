@@ -55,7 +55,7 @@ func (service *RecoverServiceImpl) GetEarliestRecoveryDateNotUsed(subscriptionId
 func (service *RecoverServiceImpl) RemoveDatesAlreadyRecovered(subscriptionId string, dates []time.Time) []time.Time {
 	recovers := service.Repository.GetRecoveredByReferenceDates(subscriptionId, dates)
 
-	var availables []time.Time
+	availables := []time.Time{}
 	for _, date := range dates {
 		isRecovered := false
 		for _, recovered := range recovers {
