@@ -33,3 +33,8 @@ func (repository *RecoveredRepository) GetLastRecoveredDates(subscriptionId stri
 
 	return recoveredDates, nil
 }
+
+func (repository *RecoveredRepository) GetRecoveredByReferenceDates(subscriptionId string, dates []time.Time) []code.Recovered {
+	// (TODO) implementar...
+	return []code.Recovered{}
+}

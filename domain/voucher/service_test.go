@@ -27,7 +27,7 @@ func TestRecover(t *testing.T) {
 	mockRecoverService.
 		EXPECT().
 		GetEarliestRecoveryDateNotUsed(gomock.Any(), gomock.Any()).
-		Return(activationDate)
+		Return(activationDate, nil)
 
 	mockRepository.
 		EXPECT().
