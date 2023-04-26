@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestGetEarliestRecoveryDateNotUsed(t *testing.T) {
@@ -62,5 +63,28 @@ func TestGetEarliestRecoveryDateNotUsedWithErr(t *testing.T) {
 	}
 	if got != (time.Time{}) {
 		t.Fatalf("Expected date: %s but got: %s", time.Time{}, got)
+	}
+}
+
+func TestRemoveDatesAlreadyRecovered(t *testing.T) {
+	subscriptionId := "SOME SUBSCRIPTION"
+	date1 := time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)
+	date2 := time.Date(2023, 1, 31, 0, 0, 0, 0, time.UTC)
+	dates := []time.Time{date1, date2}
+	recovers := []Recovered{
+		{ID: 1, CodeId: "SOME CODE", RecoveryDate: date1, ReferenceDate: date1, SubscriptionId: subscriptionId},
+	}
+	mockRepository := NewMockRepository(gomock.NewController(t))
+	service := NewRecoveryService(mockRepository)
+
+	mockRepository.EXPECT().
+		GetRecoveredByReferenceDates(subscriptionId, dates).
+		Return(recovers)
+
+	got := service.RemoveDatesAlreadyRecovered(subscriptionId, dates)
+
+	expected := []time.Time{date2}
+	if cmp.Diff(got, expected) != "" {
+		t.Fatalf("Expected: %#v but got: %#v", expected, got)
 	}
 }

@@ -75,7 +75,7 @@ func (service *voucherService) AvailableVouchers(subscriptionId string, activati
 
 	// remove os resgates já usados
 
-	availableDates = service.RecoverService.FilterRecoveryAlreadyUsed(availableDates)
+	availableDates = service.RecoverService.RemoveDatesAlreadyRecovered(subscriptionId, availableDates)
 
 	availableDTO.Quantity = len(availableDates)
 	availableDTO.NextRecoveryDate = recoverParameter.GetNextRecoverDate(activationDate, now)

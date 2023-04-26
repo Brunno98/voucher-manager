@@ -48,3 +48,17 @@ func (mr *MockRepositoryMockRecorder) GetLastRecoveredDates(arg0, arg1 interface
         mr.mock.ctrl.T.Helper()
         return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLastRecoveredDates", reflect.TypeOf((*MockRepository)(nil).GetLastRecoveredDates), arg0, arg1)
 }
+
+// GetRecoveredByReferenceDates mocks base method.
+func (m *MockRepository) GetRecoveredByReferenceDates(arg0 string, arg1 []time.Time) []Recovered {
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "GetRecoveredByReferenceDates", arg0, arg1)
+        ret0, _ := ret[0].([]Recovered)
+        return ret0
+}
+
+// GetRecoveredByReferenceDates indicates an expected call of GetRecoveredByReferenceDates.
+func (mr *MockRepositoryMockRecorder) GetRecoveredByReferenceDates(arg0, arg1 interface{}) *gomock.Call {
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRecoveredByReferenceDates", reflect.TypeOf((*MockRepository)(nil).GetRecoveredByReferenceDates), arg0, arg1)
+}

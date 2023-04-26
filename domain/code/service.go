@@ -7,7 +7,7 @@ import (
 type RecoverService interface {
 	// Recover(subscriptionId string, referenceDate time.Time, voucherKey string) (Code, error)
 	GetEarliestRecoveryDateNotUsed(subscriptionId string, availableDates []time.Time) (time.Time, error)
-	FilterRecoveryAlreadyUsed(dates []time.Time) []time.Time
+	RemoveDatesAlreadyRecovered(subscriptionId string, dates []time.Time) []time.Time
 }
 
 type RecoverServiceImpl struct {
@@ -52,7 +52,22 @@ func (service *RecoverServiceImpl) GetEarliestRecoveryDateNotUsed(subscriptionId
 	return validDate, nil
 }
 
-func (service *RecoverServiceImpl) FilterRecoveryAlreadyUsed(dates []time.Time) []time.Time {
-	// (TODO) Implementar...
-	return dates
+func (service *RecoverServiceImpl) RemoveDatesAlreadyRecovered(subscriptionId string, dates []time.Time) []time.Time {
+	recovers := service.Repository.GetRecoveredByReferenceDates(subscriptionId, dates)
+
+	var availables []time.Time
+	for _, date := range dates {
+		isRecovered := false
+		for _, recovered := range recovers {
+			if date == recovered.ReferenceDate {
+				isRecovered = true
+				break
+			}
+		}
+		if !isRecovered {
+			availables = append(availables, date)
+		}
+	}
+
+	return availables
 }

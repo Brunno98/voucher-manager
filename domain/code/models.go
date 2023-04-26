@@ -13,5 +13,6 @@ type Recovered struct {
 	ID             uint
 	CodeId         string
 	RecoveryDate   time.Time
+	ReferenceDate  time.Time
 	SubscriptionId string
 }
