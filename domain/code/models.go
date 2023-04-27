@@ -10,9 +10,9 @@ type Code struct {
 }
 
 type Recovered struct {
-	ID             uint
-	CodeId         string
+	ID             uint   `gorm:"primaryKey"`
+	CodeId         string `gorm:"not null,unique"`
 	RecoveryDate   time.Time
 	ReferenceDate  time.Time
-	SubscriptionId string
+	SubscriptionId string `gorm:"not null"`
 }

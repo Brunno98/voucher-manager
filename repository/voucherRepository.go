@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"errors"
+	"log"
 	"time"
 
 	"github.com/brunno98/voucher-manager/domain/code"
@@ -28,11 +30,18 @@ func (repository *VoucherRepository) FindByKey(key string) (voucher.Voucher, err
 }
 
 func (repository *VoucherRepository) Recover(subscriptionId string, referenceDate time.Time, voucher *voucher.Voucher) (code.Code, error) {
-	c := code.Code{VoucherId: voucher.ID}
+	c := code.Code{}
 	err := repository.db.
-		First(&c).Error
+		Raw("SELECT * FROM codes c WHERE c.voucher_id = ? AND c.code NOT IN (SELECT code_id FROM recovereds) LIMIT 1;", voucher.ID).
+		Scan(&c).Error
 	if err != nil {
+		log.Println("ERROR!!! ao recuperar voucher")
+		log.Println(err)
 		return c, err
+	}
+
+	if c.Code == "" {
+		return c, errors.New("code not recoverd")
 	}
 
 	err = repository.db.Create(&code.Recovered{
