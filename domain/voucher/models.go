@@ -2,13 +2,14 @@ package voucher
 
 import (
 	"time"
-
-	"github.com/jinzhu/gorm"
 )
 
 type Voucher struct {
-	gorm.Model
-	Key string `gorm:"unique"`
+	ID        uint `gorm:"primary_key"`
+	CreatedAt time.Time
+	Key       string     `gorm:"unique"`
+	UpdatedAt time.Time  `json:"-"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
 }
 
 // Estrutura que represanta a parametrização de resgate.
