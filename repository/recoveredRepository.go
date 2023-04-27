@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"log"
 	"time"
 
 	"github.com/brunno98/voucher-manager/domain/code"
@@ -21,6 +22,7 @@ func (repository *RecoveredRepository) GetLastRecoveredDates(subscriptionId stri
 	err := repository.db.
 		Limit(limit).
 		Order("reference_date DESC").
+		Where(&code.Recovered{SubscriptionId: subscriptionId}).
 		Find(&recovers).Error
 	if err != nil {
 		return []time.Time{}, err
@@ -35,6 +37,18 @@ func (repository *RecoveredRepository) GetLastRecoveredDates(subscriptionId stri
 }
 
 func (repository *RecoveredRepository) GetRecoveredByReferenceDates(subscriptionId string, dates []time.Time) []code.Recovered {
-	// (TODO) implementar...
-	return []code.Recovered{}
+	recovers := []code.Recovered{}
+
+	err := repository.db.
+		Where(map[string]interface{}{
+			"reference_date":  dates,
+			"subscription_id": subscriptionId,
+		}).
+		Find(&recovers).Error
+	if err != nil {
+		log.Fatal(err)
+		return []code.Recovered{}
+	}
+
+	return recovers
 }
