@@ -29,16 +29,20 @@ func (repository *VoucherRepository) FindByKey(key string) (voucher.Voucher, err
 
 func (repository *VoucherRepository) Recover(subscriptionId string, referenceDate time.Time, voucher *voucher.Voucher) (code.Code, error) {
 	c := code.Code{VoucherId: voucher.ID}
-	result := repository.db.
-		First(&c).
-		Create(&code.Recovered{
-			CodeId:         c.Code,
-			SubscriptionId: subscriptionId,
-			RecoveryDate:   time.Now(),
-		})
+	err := repository.db.
+		First(&c).Error
+	if err != nil {
+		return c, err
+	}
 
-	if result.Error != nil {
-		return c, result.Error
+	err = repository.db.Create(&code.Recovered{
+		CodeId:         c.Code,
+		SubscriptionId: subscriptionId,
+		RecoveryDate:   time.Now(),
+		ReferenceDate:  referenceDate,
+	}).Error
+	if err != nil {
+		return c, err
 	}
 
 	return c, nil
